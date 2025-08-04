@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Websocket Client</title>
+</head>
+<body>
+    <div>
+        <input type="text" id="message" />
+    </div>
+
+    <div>
+        <button type="button" id="sendMessage" disabled>Can't Send</button>
+    </div>
+    
+    <script>
+        const socket = new WebSocket('ws://localhost:9000');
+
+        socket.onopen = function(){
+            console.log("Connected to Server Successfully");
+            sendMessage.removeAttribute("disabled");
+            sendMessage.innerText   = "Send Message";
+        }
+
+        socket.onmessage = (event)=>{
+            console.log("Message Recieved ", event.data );
+        }
+
+        socket.onerror = ()=>{
+            console.log("Error Occured while connecting to dtabase")
+        }
+
+        socket.onclose = ()=>{
+            console.log("Client or server disconnected");
+        }
+
+        sendMessage.onclick = function(){
+            const mes = message.value;
+            socket.send(mes);
+        }
+    </script>
+</body>
+</html>
