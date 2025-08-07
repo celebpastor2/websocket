@@ -19,7 +19,8 @@ const wss   = new ws.Server({server})
 wss.on("connection", (socket)=>{
     socket.on("message", (message)=>{
         console.log("Message recieved from Client is: ", message)
-        socket.send("Reply from server");
+        let text = message.toString("utf-8");
+        socket.send("Reply from server " + text);
     });
 
     socket.send("Message from Server")
