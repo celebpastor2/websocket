@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const bcrypt    = require("bcrypt")
 const {Schema, model}  = mongoose;
 
 const User = new Schema({
@@ -62,6 +63,14 @@ const Message = new Schema({
 User.methods.get_id = function(){
     return this.user_id;
 }
+
+User.methods.comparePassword = function(password){
+    return bcrypt.compareSync( password, this.password );
+}
+
+User.pre("save", function(){
+     this.password = bcrypt.hashSync(this.password, 10);
+});
 
 User.pre("deleteOne", function(){
     const id = this.get_id();

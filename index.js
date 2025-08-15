@@ -9,8 +9,38 @@ const ws    = require("ws")//websocket manager
 const uuid  = require("uuid")//unique id system for our users
 const { channel } = require("process")
 const mongoose = require("mongoose")
+const UserRoutes = require("./userRoutes.js")
+const express = require("express")
 const {User, Channel, Message} = require("./models.js")
 const html  = fs.readFileSync(path.join(__dirname, "frontend.html"))
+const app   = express()
+
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "html"));//load up a setting on your app
+
+
+app.use(function(req, res, next){
+    next()
+});
+
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
+app.use(express.urlencoded());
+//controllers 
+app.all('/endpoint', function(req, res){
+    res.render("index");
+});
+
+app.use(UserRoutes);
+
+
+//test dynamism of ejs template
+app.all('/second/endies', function(req, res){
+    res.render("index", {
+        title: "Second Template",
+        text: "<p>Testing the Dynamism of EJS template</p>"
+    });
+});
 
 
 
@@ -145,4 +175,8 @@ wss.on("connection", (socket)=>{
 const PORT = 9000;
 server.listen(PORT, ()=>{
     console.log(`server started successfully 0n port: ${PORT}`);
+});
+
+app.listen(9001, function(){
+    console.log("express JS server started!");
 });
