@@ -9,6 +9,12 @@ const User = new Schema({
         unique: true,
         lowercase: true,
     },
+    username: {
+        type: String,
+        required: true,
+        unique:true,
+        lowercase:true
+    },
     phone_number : {
         type:String,
         default:""
@@ -18,6 +24,12 @@ const User = new Schema({
         unique:true,
         required:false
     },
+    password : {
+        type:String,
+        required:true
+    },
+    first_name : String,
+    last_name: String,
 
     timestamp:Date
 });

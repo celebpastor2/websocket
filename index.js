@@ -1,6 +1,7 @@
 const http = require("http")//this makes it suitable to be used for a backend system
 const crypto = require("crypto")
 const env = require("dotenv")
+const multer = require("multer")
 env.config();
 const {functionToImport, anotherToImport} = require("./other_file.js")
 const fs    = require("fs")
@@ -26,6 +27,20 @@ app.use(function(req, res, next){
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded());
+
+//configure multer
+
+const storage = multer.diskStorage({
+    destination: "./public/uploads",
+    filename: function(req, file, cb){
+        cb(null, Date.now() + file.filename)
+    }
+});
+
+const uploader = multer({storage})
+
+app.post('/upload', uploader.single("fieldName"))
+
 //controllers 
 app.all('/endpoint', function(req, res){
     res.render("index");

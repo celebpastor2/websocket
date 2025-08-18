@@ -8,14 +8,20 @@
 <body>
     <main>
         <div>
-            <form action="/myendpoint" method="post">
-                <div>
+            <form action="/login" method="post">
+                <p>
                     <label for="username">Enter your username</label>
-                    <input type="text" name="username">
-                </div>
-                <div>
+                    <input type="text" name="username" id="username">
+                </p>
+
+                <p>
+                    <label for="password">Enter your password</label>
+                    <input type="password" name="password" id="password">
+                </p>
+
+                <p>
                     <button type="submit">Login</button>
-                </div>
+                </p>
             </form>
         </div>
     </main>
