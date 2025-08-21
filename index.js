@@ -24,9 +24,27 @@ app.use(function(req, res, next){
     next()
 });
 
+const setUser = (req, res, next)=>{
+    const userID = req.cookies.userID;
+
+    if( userID ){
+        const user = User.findById(userID);
+
+        if( user ){
+            req.user = user;
+        } else {
+            req.user = false;
+        }
+    } else {
+        req.user = false;
+    }
+    next();
+}
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded());
+app.use(setUser);
 
 //configure multer
 
@@ -50,10 +68,18 @@ app.use(UserRoutes);
 
 
 //test dynamism of ejs template
-app.all('/second/endies', function(req, res){
+app.all('/', function(req, res){
+    const user = req.user;
+
+    if(! user ){
+        return res.redirect("/login");
+    }
+    const chats = user.load_chats();
     res.render("index", {
         title: "Second Template",
-        text: "<p>Testing the Dynamism of EJS template</p>"
+        text: "<p>Testing the Dynamism of EJS template</p>",
+        nav : [{title: "Home", link: "/"}, {title: "Shop", link:"/shop"}, {title: "Profile", link: "/profile"}, {title: "Settings", link: "/settings"}],
+        chats: chats
     });
 });
 

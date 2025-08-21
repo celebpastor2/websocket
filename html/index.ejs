@@ -6,8 +6,38 @@
     <title><%= title %></title>
 </head>
 <body>
+    <main>
     <div>
         <b><%- text %></b>
     </div>
+    <aside>
+        <ul>
+        <% nav.forEach((nav)=>{ %>
+            <li><a href="<%= nav.link %>" ><%= nav.title %></a></li>
+        <% }); %>
+        </ul>
+    </aside>
+    <section>
+        
+        <div>
+            <% const processedID = []; %>
+           <% chats.forEach((chat))=>{ %>
+                <% const reciever = chat.reciever; %>
+                <% const channel = chat.channel; %>
+                <% if( processedID.includes(reciever._id) || processedID.includes(channel._id)) return; %>
+                <div>
+                    <% if(reciever) { %>
+                        <span class="name"><%= reciever.username %></span>
+                    <%  } else if(channel){ %>
+                        <span class="name"><%= channel.channel_name ?? channel.channel_id; %></span>
+                    <% } %>
+                </div>
+            <% }); %>
+        </div>
+        <div>
+
+        </div>
+    </section>
+    </main>
 </body>
 </html>

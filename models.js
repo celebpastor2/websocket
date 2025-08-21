@@ -47,7 +47,8 @@ const Channels = new Schema({
     ],
 
     channel_name: String,
-    channel_description:String
+    channel_description:String,
+    channel_icon:String
 });
 const Message = new Schema({
     message_id: {
@@ -74,6 +75,18 @@ const Message = new Schema({
 
 User.methods.get_id = function(){
     return this.user_id;
+}
+
+User.methods.load_chats = function(){
+    const id = this._id;
+    const messages = Message.find();
+
+    const user_messages = messages.filter((message)=>{
+       const user = message.sender;
+       return user._id == id;
+    });
+
+    return user_messages;
 }
 
 User.methods.comparePassword = function(password){
