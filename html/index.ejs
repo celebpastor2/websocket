@@ -4,24 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <main>
-    <div>
+    <div class="header">
         <b><%- text %></b>
     </div>
-    <aside>
+    <aside class="menu">
         <ul>
         <% nav.forEach((nav)=>{ %>
             <li><a href="<%= nav.link %>" ><%= nav.title %></a></li>
         <% }); %>
         </ul>
     </aside>
-    <section>
-        
-        <div>
+    <section class="main">        
+        <div class="chat box">
             <% const processedID = []; %>
-           <% chats.forEach((chat))=>{ %>
+           <% chats.forEach((chat)=>{ %>
                 <% const reciever = chat.reciever; %>
                 <% const channel = chat.channel; %>
                 <% if( processedID.includes(reciever._id) || processedID.includes(channel._id)) return; %>
@@ -34,8 +34,13 @@
                 </div>
             <% }); %>
         </div>
-        <div>
+        <div class="chat load">
+            <div class="message container">
 
+            </div>
+            <div class="message box">
+                <textarea name="" id="" class="message edit"></textarea>
+            </div>
         </div>
     </section>
     </main>

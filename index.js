@@ -1,5 +1,6 @@
 const http = require("http")//this makes it suitable to be used for a backend system
 const crypto = require("crypto")
+const cookieParser = require("cookie-parser")
 const env = require("dotenv")
 const multer = require("multer")
 env.config();
@@ -19,16 +20,11 @@ const app   = express()
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "html"));//load up a setting on your app
 
-
-app.use(function(req, res, next){
-    next()
-});
-
-const setUser = (req, res, next)=>{
+const setUser = async (req, res, next)=>{
     const userID = req.cookies.userID;
 
     if( userID ){
-        const user = User.findById(userID);
+        const user = await User.findById(userID);
 
         if( user ){
             req.user = user;
@@ -41,6 +37,7 @@ const setUser = (req, res, next)=>{
     next();
 }
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded());
@@ -68,18 +65,19 @@ app.use(UserRoutes);
 
 
 //test dynamism of ejs template
-app.all('/', function(req, res){
+app.all('/', async function(req, res){
     const user = req.user;
 
     if(! user ){
         return res.redirect("/login");
     }
-    const chats = user.load_chats();
-    res.render("index", {
+    const chats = await user.load_chats();
+    res.render("chat", {
         title: "Second Template",
         text: "<p>Testing the Dynamism of EJS template</p>",
         nav : [{title: "Home", link: "/"}, {title: "Shop", link:"/shop"}, {title: "Profile", link: "/profile"}, {title: "Settings", link: "/settings"}],
-        chats: chats
+        chats: chats,
+        user:user
     });
 });
 

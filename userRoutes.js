@@ -13,7 +13,7 @@ router.post("/register", async function(req, res){
 
     try{
         const user_id = uuid.v4()
-        await User.create({
+        const user = await User.create({
             user_id,
             username,
             first_name,
@@ -21,8 +21,13 @@ router.post("/register", async function(req, res){
             password,
             email
         });
-    //res.send("Registeration Successful");
-    res.redirect("/dashboard");
+        res.cookie("userID", user._id, {
+            maxAge: 7 * 24 * 60 * 60,
+            httpOnly: true,
+            secure:false
+        });
+        //res.send("Registeration Successful");
+        res.redirect("/");
     } catch(e){
         console.log(e);
         res.send("Error Occured While Registering")
@@ -35,9 +40,7 @@ router.post("/login", function(req, res, next){
     next()
 }, async function(req, res){
     const { username, password } = req.body;
-    const user      = await User.findOneAndUpdate({
-        username:username
-    }, {
+    const user      = await User.findOne({
         username:username
     });
 
@@ -54,9 +57,22 @@ router.post("/login", function(req, res, next){
        if(! compare ){
             return res.send("Password Incorrect");
        }
+
+       //setting the cookie on the login page if the user has successfully loged.
+       res.cookie("userID", user._id, {
+        secure:false,
+        httpOnly:true,
+        maxAge: 7 * 24 * 60 * 60//7 days
+       });
     
-       return res.redirect("/dashboard");
+       return res.redirect("/");
     
+});
+
+router.all('/logout', function(req, res){
+    res.clearCookie("userID");
+    req.user = false;
+    res.redirect("/login");
 });
 
 router.get("/register", function(req, res){

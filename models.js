@@ -77,9 +77,10 @@ User.methods.get_id = function(){
     return this.user_id;
 }
 
-User.methods.load_chats = function(){
+User.methods.load_chats = async function(){
     const id = this._id;
-    const messages = Message.find();
+    const message = model( "Message", Message);
+    const messages = await message.find().populate('sender').exec();
 
     const user_messages = messages.filter((message)=>{
        const user = message.sender;
