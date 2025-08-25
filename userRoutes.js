@@ -2,6 +2,7 @@ const express = require("express");
 const {User}    = require("./models.js")
 const uuid  = require("uuid")
 const router = express.Router();
+const {signUserToken} = require("./functions.js")
 
 
 router.post("/register", async function(req, res){
@@ -21,7 +22,7 @@ router.post("/register", async function(req, res){
             password,
             email
         });
-        res.cookie("userID", user._id, {
+        res.cookie("userID", signUserToken( user._id ), {
             maxAge: 7 * 24 * 60 * 60,
             httpOnly: true,
             secure:false
@@ -59,7 +60,7 @@ router.post("/login", function(req, res, next){
        }
 
        //setting the cookie on the login page if the user has successfully loged.
-       res.cookie("userID", user._id, {
+       res.cookie("userID", signUserToken( user._id ), {
         secure:false,
         httpOnly:true,
         maxAge: 7 * 24 * 60 * 60//7 days

@@ -4,7 +4,7 @@ const {Schema, model}  = mongoose;
 
 const User = new Schema({
     user_id: {
-        type: Schema.Types.String,
+        type: String,
         required:true,
         unique: true,
         lowercase: true,

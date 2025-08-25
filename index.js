@@ -14,6 +14,7 @@ const mongoose = require("mongoose")
 const UserRoutes = require("./userRoutes.js")
 const express = require("express")
 const {User, Channel, Message} = require("./models.js")
+const {verifyUserToken} = require("./functions.js")
 const html  = fs.readFileSync(path.join(__dirname, "frontend.html"))
 const app   = express()
 
@@ -21,10 +22,12 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "html"));//load up a setting on your app
 
 const setUser = async (req, res, next)=>{
-    const userID = req.cookies.userID;
+    const userID = verifyUserToken( req.cookies.userID );
+   // res.send("Middleware working");//blocking midddleware
 
     if( userID ){
-        const user = await User.findById(userID);
+
+        const user = await User.findById(userID.userID);
 
         if( user ){
             req.user = user;
@@ -34,6 +37,7 @@ const setUser = async (req, res, next)=>{
     } else {
         req.user = false;
     }
+    //pass to the next middleware or controller
     next();
 }
 
@@ -48,13 +52,18 @@ app.use(setUser);
 const storage = multer.diskStorage({
     destination: "./public/uploads",
     filename: function(req, file, cb){
-        cb(null, Date.now() + file.filename)
+        cb(null, Date.now().toString() + file.originalname )
     }
 });
 
 const uploader = multer({storage})
 
-app.post('/upload', uploader.single("fieldName"))
+app.post('/upload', uploader.single("fieldName"), function(req, res){
+    res.send("File Successfully Uploaded to Server");
+});
+app.get("/upload", async (req, res)=>{
+    res.render("upload");
+});
 
 //controllers 
 app.all('/endpoint', function(req, res){
