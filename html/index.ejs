@@ -20,19 +20,7 @@
     </aside>
     <section class="main">        
         <div class="chat box">
-            <% const processedID = []; %>
-           <% chats.forEach((chat)=>{ %>
-                <% const reciever = chat.reciever; %>
-                <% const channel = chat.channel; %>
-                <% if( processedID.includes(reciever._id) || processedID.includes(channel._id)) return; %>
-                <div>
-                    <% if(reciever) { %>
-                        <span class="name"><%= reciever.username %></span>
-                    <%  } else if(channel){ %>
-                        <span class="name"><%= channel.channel_name ?? channel.channel_id; %></span>
-                    <% } %>
-                </div>
-            <% }); %>
+        
         </div>
         <div class="chat load">
             <div class="message container">
@@ -45,4 +33,5 @@
     </section>
     </main>
 </body>
+<script src="chat.js"></script>
 </html>

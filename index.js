@@ -132,6 +132,8 @@ wss.on("connection", (socket)=>{
     socket.on("message", (message)=>{
 
         console.log("Message recieved from Client is: ", message.toString("utf-8"))
+
+
         
         try {
             //messages must always be formatted in JSON format
@@ -140,6 +142,27 @@ wss.on("connection", (socket)=>{
             if( text.former_user_id && text.former_user_id != text.chat_id ){
                 const currentUser = User.findOne({user_id:text.chat_id});
                 const formerUser = User.findOne({user_id:text.former_user_id});
+            }
+
+            if( text.message == "update_chat_id" ){
+                const allSockets = channels['general'].sockets;
+                const allUsers = channels['general'].users;
+
+                const last_id = text.last_chat_id;
+                const new_id    = text.chat_id;
+
+                allUsers.delete(last_id);
+                allUsers.add(new_id);
+
+                for( const sock in allSockets ){
+                    if(sock.user_id == last_id){
+                        sock.user_id = new_id;
+                    }
+                }
+
+                channels['general'].sockets = allSockets;
+                channels['general'].users   = allUsers;
+                return;
             }
 
             const channel_info = channels[text.channel_id ?? 'general'];//checking if the variable if falsy
@@ -151,7 +174,7 @@ wss.on("connection", (socket)=>{
                     creator_id: text.sender_id
                 }
 
-                if( text.recipient_id && channel_info.users.has(text.recipient_id)){
+                if( text.recipient_id && channel_info. users.has(text.recipient_id)){
                     for( const user of channel_info.sockets ){
                         if( user.user_id == text.recipient_id ){
                            channels[text.channel_id].sockets.add(user);
@@ -201,8 +224,9 @@ wss.on("connection", (socket)=>{
     });
 
     const send_obj = {
-        message: user_id,
-        type: "set_user"
+        message: "set_chat_id",
+        type: "set_user",
+        chat_id: user_id
     };
 
     channels['general'].users.add(user_id);
@@ -211,20 +235,22 @@ wss.on("connection", (socket)=>{
         socket
     };
 
-    User.create({
+    /*User.create({
         user_id,
-    });
+    });*/
     channels['general'].sockets.add(user_socket);
     send_obj.online_users = channels['general'].sockets.size;
 
     socket.send(JSON.stringify(send_obj));
 });
 
-const PORT = 9000;
+const PORT = 9005;
 server.listen(PORT, ()=>{
     console.log(`server started successfully 0n port: ${PORT}`);
 });
 
-app.listen(9001, function(){
-    console.log("express JS server started!");
+const NODE_PORT = 9006
+
+app.listen(NODE_PORT, function(){
+    console.log(`express JS server started! at ${NODE_PORT}`);
 });

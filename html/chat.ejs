@@ -36,10 +36,10 @@
   <!-- Chat Area -->
   <div class="chat">
     <div class="chat-header">
-      <h3>John Doe</h3>
+      <h3 id="username" chat_id="<%= user.user_id; %>"><%= user.username %></h3>
       <span>⋮</span>
     </div>
-    <div class="messages" id="messageBox">
+    <div class="messages" id="messageBox" recipient_id="general">
       <!--<div class="message received">Hey! How are you?</div>
       <div class="message sent">I’m good, thanks! And you?</div>
       <div class="message received">Doing well! What’s up?</div>
